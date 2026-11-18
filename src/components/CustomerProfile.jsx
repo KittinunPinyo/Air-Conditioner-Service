@@ -1,11 +1,82 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { formatDate, jobStages, useCustomerData } from './customerData';
+import { formatDate, jobStages, useCustomerData } from './customerContext';
 import { LogoutButton } from './AuthPages';
 
+function PaymentProof({ job, refreshBookings }) {
+  const [uploading, setUploading] = useState(false);
+  const [error, setError] = useState('');
+  const [submittedPayment, setSubmittedPayment] = useState(null);
+  const status = submittedPayment?.status || job.paymentStatus;
+  const amount = submittedPayment?.amount ?? job.finalPrice;
+  const statusLabels = {
+    pending: ['รอตรวจสอบหลักฐาน', 'warning'],
+    approved: ['ชำระเงินแล้ว', 'success'],
+    rejected: ['หลักฐานถูกปฏิเสธ', 'danger'],
+  };
+  const [label, tone] = statusLabels[status] || ['ยังไม่ได้ส่งหลักฐาน', 'secondary'];
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    const formElement = event.currentTarget;
+    const formData = new FormData(formElement);
+    setError('');
+    setUploading(true);
+
+    try {
+      const response = await fetch(`/api/bookings/${encodeURIComponent(job.id)}/payment-proof`, {
+        method: 'POST',
+        credentials: 'same-origin',
+        body: formData,
+      });
+      const contentType = response.headers.get('content-type') || '';
+      if (!contentType.includes('application/json')) {
+        throw new Error(`Backend ส่งข้อมูลกลับมาไม่ถูกต้อง (HTTP ${response.status})`);
+      }
+      const payload = await response.json();
+      if (!response.ok) throw new Error(payload.message || `ส่งหลักฐานไม่สำเร็จ (${response.status})`);
+      if (payload.payment?.status !== 'pending' || !Number.isFinite(Number(payload.payment.amount))) {
+        throw new Error('Backend ส่งสถานะการชำระเงินกลับมาไม่ถูกต้อง');
+      }
+      setSubmittedPayment(payload.payment);
+      formElement.reset();
+      const bookings = await refreshBookings();
+      if (bookings) setSubmittedPayment(null);
+    } catch (requestError) {
+      setError(requestError.message || 'ส่งหลักฐานการชำระเงินไม่สำเร็จ');
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  return (
+    <div className="rounded-3 p-3 mb-3 bg-light border">
+      <div className="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-2">
+        <strong className="small">หลักฐานการชำระเงิน</strong>
+        <span className={`badge text-bg-${tone}`} role="status">{label}</span>
+      </div>
+      {amount != null && <p className="small mb-2">ยอดชำระ <strong>{Number(amount).toLocaleString('th-TH')} ฿</strong></p>}
+      {status !== 'approved' && (
+        job.finalPrice == null
+          ? <p className="small text-muted mb-0">รอสรุปราคาสุดท้ายจากทีมช่างก่อนส่งหลักฐาน</p>
+          : <form onSubmit={handleSubmit}>
+            <label className="form-label small mb-1" htmlFor={`payment-proof-${job.id}`}>แนบสลิปหรือหลักฐานการชำระเงิน</label>
+            <div className="d-flex flex-wrap gap-2">
+              <input id={`payment-proof-${job.id}`} className="form-control form-control-sm flex-grow-1" type="file" name="file" accept="image/*" required />
+              <button className="btn btn-primary btn-sm text-nowrap" type="submit" disabled={uploading}>
+                {uploading ? 'กำลังส่ง…' : status === 'rejected' ? 'ส่งหลักฐานใหม่' : status === 'pending' ? 'ส่งหลักฐานใหม่' : 'ส่งหลักฐาน'}
+              </button>
+            </div>
+            {error && <p className="text-danger small mt-2 mb-0" role="alert">{error}</p>}
+          </form>
+      )}
+    </div>
+  );
+}
+
 export default function CustomerProfile() {
-  const { user, jobs, reviews, saveReview, loading, error: dataError } = useCustomerData();
+  const { user, jobs, reviews, saveReview, refreshBookings, loading, error: dataError } = useCustomerData();
   const [ratings, setRatings] = useState({});
   const [reviewComments, setReviewComments] = useState({});
   const [reviewErrors, setReviewErrors] = useState({});
@@ -124,6 +195,8 @@ export default function CustomerProfile() {
                       </ul>
                     ) : <p className="text-muted mb-0 mt-1">ไม่มีรายการอะไหล่</p>}
                   </div>
+
+                  <PaymentProof job={job} refreshBookings={refreshBookings} />
 
                   {reviews[job.id] ? (
                     <div className="alert alert-success mb-0">

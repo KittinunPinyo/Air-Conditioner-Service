@@ -1,12 +1,21 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { formatDate, getLocalDate, jobStages, useCustomerData } from './customerData';
+import {
+  formatDate,
+  getLocalDate,
+  jobStages,
+  useCustomerData,
+} from './customerContext';
 import { LogoutButton } from './AuthPages';
 
 export default function CustomerHome() {
   const { user, jobs, addBooking, loading: jobsLoading, error: jobsError } = useCustomerData();
-  const [serviceType, setServiceType] = useState('repair'); 
+  const [pricingRetry, setPricingRetry] = useState(0);
+  const [pricingResult, setPricingResult] = useState({ version: null, settings: null, error: '' });
+  const [categoriesRetry, setCategoriesRetry] = useState(0);
+  const [categoriesResult, setCategoriesResult] = useState({ version: null, categories: null, error: '' });
+  const [selectedCategoryId, setSelectedCategoryId] = useState('');
   const [acType, setAcType] = useState('wall');
   const [btu, setBtu] = useState('9000');
   const [issue, setIssue] = useState('clean'); 
@@ -17,30 +26,84 @@ export default function CustomerHome() {
   const [bookingNotice, setBookingNotice] = useState('');
   const [bookingError, setBookingError] = useState('');
 
+  useEffect(() => {
+    let active = true;
+    fetch('/api/pricing', { credentials: 'same-origin' })
+      .then(async (response) => {
+        const contentType = response.headers.get('content-type') || '';
+        if (!contentType.includes('application/json')) {
+          throw new Error(`Backend ส่งข้อมูลราคากลับมาไม่ถูกต้อง (HTTP ${response.status})`);
+        }
+        const payload = await response.json();
+        if (!response.ok) throw new Error(payload.message || `โหลดราคาบริการไม่สำเร็จ (${response.status})`);
+        const settings = payload.settings;
+        const numericKeys = [
+          'repairBaseSmall', 'repairBaseLarge', 'ceilingFee', 'installWall', 'installCeiling',
+          'largeBtuSurcharge', 'moveMin', 'moveMax',
+        ];
+        const validSettings = settings && numericKeys.every((key) => Number.isFinite(settings[key]))
+          && settings.issueSurcharge
+          && ['clean', 'not_cold', 'leaking', 'not_working'].every((key) => Number.isFinite(settings.issueSurcharge[key]));
+        if (!validSettings) throw new Error('Backend ส่งการตั้งราคามาไม่ครบถ้วน');
+        return settings;
+      })
+      .then((settings) => { if (active) setPricingResult({ version: pricingRetry, settings, error: '' }); })
+      .catch((requestError) => {
+        if (active) setPricingResult({ version: pricingRetry, settings: null, error: requestError.message });
+      });
+    return () => { active = false; };
+  }, [pricingRetry]);
+
+  useEffect(() => {
+    let active = true;
+    fetch('/api/categories', { credentials: 'same-origin' })
+      .then(async (response) => {
+        const contentType = response.headers.get('content-type') || '';
+        if (!contentType.includes('application/json')) {
+          throw new Error(`Backend ส่งหมวดหมู่บริการกลับมาไม่ถูกต้อง (HTTP ${response.status})`);
+        }
+        const payload = await response.json();
+        if (!response.ok) throw new Error(payload.message || `โหลดหมวดหมู่บริการไม่สำเร็จ (${response.status})`);
+        if (!Array.isArray(payload.categories)
+          || payload.categories.some((category) => !['repair', 'install'].includes(category.serviceType))) {
+          throw new Error('Backend ส่งหมวดหมู่บริการมาไม่ถูกต้อง');
+        }
+        return payload.categories.filter((category) => category.isActive);
+      })
+      .then((categories) => { if (active) setCategoriesResult({ version: categoriesRetry, categories, error: '' }); })
+      .catch((requestError) => {
+        if (active) setCategoriesResult({ version: categoriesRetry, categories: null, error: requestError.message });
+      });
+    return () => { active = false; };
+  }, [categoriesRetry]);
+
+  const pricingLoading = pricingResult.version !== pricingRetry;
+  const pricingSettings = pricingLoading ? null : pricingResult.settings;
+  const pricingError = pricingLoading ? '' : pricingResult.error;
+  const categoriesLoading = categoriesResult.version !== categoriesRetry;
+  const categories = categoriesLoading ? null : categoriesResult.categories;
+  const categoriesError = categoriesLoading ? '' : categoriesResult.error;
+  const selectedCategory = categories?.find((category) => category.id === selectedCategoryId)
+    || categories?.[0]
+    || null;
+  const serviceType = selectedCategory?.serviceType;
+
   const calculatePrice = () => {
+    if (!pricingSettings || !serviceType) return null;
     let minPrice = 0;
     let maxPrice = 0;
 
     if (serviceType === 'repair') {
-      let basePrice = btu === '9000' || btu === '12000' ? 500 : 800;
-      if (acType === 'ceiling') basePrice += 300; 
-      minPrice = basePrice;
-      maxPrice = basePrice;
-
-      if (issue === 'not_cold') maxPrice += 800; 
-      if (issue === 'leaking') maxPrice += 500; 
-      if (issue === 'not_working') maxPrice += 1500; 
+      const basePrice = Number(btu) <= 12000 ? pricingSettings.repairBaseSmall : pricingSettings.repairBaseLarge;
+      const serviceFee = acType === 'ceiling' ? pricingSettings.ceilingFee : 0;
+      minPrice = basePrice + serviceFee;
+      maxPrice = minPrice + pricingSettings.issueSurcharge[issue];
     } 
     else if (serviceType === 'install') {
-      let baseInstall = acType === 'wall' ? 2500 : 4500; 
-      if (btu === '18000' || btu === '24000') baseInstall += 1000;
-      minPrice = baseInstall;
-      maxPrice = baseInstall;
-
-      if (installWork === 'move') {
-        minPrice += 1000; 
-        maxPrice += 1500; 
-      }
+      const baseInstall = (acType === 'wall' ? pricingSettings.installWall : pricingSettings.installCeiling)
+        + (Number(btu) >= 18000 ? pricingSettings.largeBtuSurcharge : 0);
+      minPrice = installWork === 'move' ? baseInstall + pricingSettings.moveMin : baseInstall;
+      maxPrice = installWork === 'move' ? baseInstall + pricingSettings.moveMax : baseInstall;
     }
     return { min: minPrice, max: maxPrice };
   };
@@ -52,6 +115,10 @@ export default function CustomerHome() {
     event.preventDefault();
     setBookingNotice('');
     setBookingError('');
+    if (!pricingSettings || pricingError || !selectedCategory || categoriesError) {
+      setBookingError('ไม่สามารถยืนยันการจองได้จนกว่าจะโหลดราคาบริการและหมวดหมู่สำเร็จ');
+      return;
+    }
     try {
       const newJob = await addBooking({
         serviceType,
@@ -111,24 +178,24 @@ export default function CustomerHome() {
                 <p className="text-muted small mb-0">เลือกบริการที่ต้องการและประเมินราคาทันที</p>
               </div>
 
-              {/* Tab เลือกบริการ (ดีไซน์สไตล์ iOS) */}
-              <div className="d-flex p-1 mb-4" style={{ backgroundColor: '#e6f0ff', borderRadius: '1rem' }}>
-                <button 
-                  type="button"
-                  className={`btn flex-fill fw-bold border-0 ${serviceType === 'repair' ? 'bg-white shadow-sm' : 'text-muted bg-transparent'}`}
-                  style={{ borderRadius: '0.8rem', color: serviceType === 'repair' ? '#0d6efd' : '' }}
-                  onClick={() => { setServiceType('repair'); setBookingNotice(''); setBookingError(''); }}
-                >
-                  ซ่อม / ล้างแอร์
-                </button>
-                <button 
-                  type="button"
-                  className={`btn flex-fill fw-bold border-0 ${serviceType === 'install' ? 'bg-white shadow-sm' : 'text-muted bg-transparent'}`}
-                  style={{ borderRadius: '0.8rem', color: serviceType === 'install' ? '#0d6efd' : '' }}
-                  onClick={() => { setServiceType('install'); setBookingNotice(''); setBookingError(''); }}
-                >
-                  ติดตั้ง / ย้ายแอร์
-                </button>
+              <div className="mb-4">
+                <label className="small fw-bold mb-2" style={{ color: '#0056b3' }}>เลือกหมวดหมู่บริการ</label>
+                {categoriesLoading ? <p className="small text-muted mb-0" role="status">กำลังโหลดหมวดหมู่บริการ…</p>
+                  : categoriesError ? <div className="alert alert-danger small mb-0" role="alert">
+                    <p className="mb-2">{categoriesError}</p>
+                    <button type="button" className="btn btn-sm btn-outline-danger" onClick={() => setCategoriesRetry((value) => value + 1)}>ลองอีกครั้ง</button>
+                  </div>
+                    : categories?.length ? <div className="d-flex flex-wrap gap-2 p-2" style={{ backgroundColor: '#e6f0ff', borderRadius: '1rem' }}>
+                      {categories.map((category) => <button key={category.id} type="button"
+                        aria-pressed={selectedCategory?.id === category.id}
+                        className={`btn flex-fill fw-bold border-0 ${selectedCategory?.id === category.id ? 'bg-white shadow-sm text-primary' : 'text-muted bg-transparent'}`}
+                        style={{ borderRadius: '0.8rem' }}
+                        onClick={() => { setSelectedCategoryId(category.id); setBookingNotice(''); setBookingError(''); }}>
+                        {category.name}
+                      </button>)}
+                    </div>
+                      : <p className="small text-danger mb-0" role="alert">ไม่มีหมวดหมู่บริการที่เปิดใช้งาน กรุณาติดต่อผู้ดูแลระบบ</p>}
+                {selectedCategory && <p className="small text-muted mt-2 mb-0">ประเภทบริการ: {selectedCategory.serviceType === 'repair' ? 'ซ่อม / ล้างแอร์' : 'ติดตั้ง / ย้ายแอร์'}</p>}
               </div>
 
               {/* แบบฟอร์มกรอกข้อมูล (ดีไซน์ช่องกรอกเป็นสีฟ้าอ่อนๆ) */}
@@ -208,11 +275,16 @@ export default function CustomerHome() {
                 <p className="fw-semibold mb-1 small text-white-50 position-relative z-1">
                   {serviceType === 'repair' ? 'ราคาประเมินค่าแรง/ซ่อมเบื้องต้น' : 'ราคาประเมินค่าแรงติดตั้ง'}
                 </p>
-                <h1 className="fw-bolder mb-1 position-relative z-1">
-                  {price.min === price.max 
-                    ? `${price.min.toLocaleString()} ฿` 
-                    : `${price.min.toLocaleString()} - ${price.max.toLocaleString()} ฿`}
-                </h1>
+                {pricingLoading ? <p className="mb-1 position-relative z-1" role="status">กำลังโหลดราคาจากระบบ…</p>
+                  : pricingError ? <div className="position-relative z-1" role="alert">
+                    <p className="mb-2">{pricingError}</p>
+                    <button type="button" className="btn btn-sm btn-light" onClick={() => setPricingRetry((value) => value + 1)}>ลองโหลดราคาอีกครั้ง</button>
+                  </div>
+                    : price && <h1 className="fw-bolder mb-1 position-relative z-1">
+                      {price.min === price.max
+                        ? `${price.min.toLocaleString()} ฿`
+                        : `${price.min.toLocaleString()} - ${price.max.toLocaleString()} ฿`}
+                    </h1>}
                 <p className="small mb-0 text-white-50 position-relative z-1" style={{ fontSize: '0.75rem' }}>
                   *ราคาเป็นเพียงการประเมินเบื้องต้น ยังไม่รวมค่าอะไหล่และค่าใช้จ่ายส่วนเกิน
                 </p>
@@ -221,7 +293,7 @@ export default function CustomerHome() {
               {/* ปุ่มกดยืนยัน (ขยายเต็ม ความโค้งมน รับกับกล่องราคา) */}
               <button 
                 type="submit"
-                disabled={jobsLoading}
+                disabled={jobsLoading || pricingLoading || Boolean(pricingError) || !price || categoriesLoading || Boolean(categoriesError) || !selectedCategory}
                 className="btn w-100 fw-bold shadow-sm" 
                 style={{ 
                   padding: '1.2rem', 
@@ -233,7 +305,7 @@ export default function CustomerHome() {
                   transition: 'all 0.3s ease'
                 }}
               >
-                {jobsLoading ? 'กำลังโหลดข้อมูล...' : 'ยืนยันการจองคิวช่าง'}
+                {categoriesLoading ? 'กำลังโหลดหมวดหมู่...' : categoriesError || !selectedCategory ? 'ไม่สามารถโหลดหมวดหมู่ได้' : pricingLoading ? 'กำลังโหลดราคา...' : pricingError ? 'ไม่สามารถโหลดราคาได้' : jobsLoading ? 'กำลังโหลดข้อมูล...' : 'ยืนยันการจองคิวช่าง'}
               </button>
               {bookingNotice && <div className="alert alert-success mt-3 mb-0 small" role="status">{bookingNotice}</div>}
               {bookingError && <div className="alert alert-danger mt-3 mb-0 small" role="alert">{bookingError}</div>}

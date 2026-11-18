@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { useCustomerData } from './customerData';
+import { useCustomerData } from './customerContext';
 
 function PasswordCard({ title, description, children }) {
   return (

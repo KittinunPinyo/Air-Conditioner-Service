@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { useCustomerData } from './customerData';
+import { useCustomerData } from './customerContext';
+import { roleHome } from './roles';
 
 function AuthLayout({ children, image, heading, description }) {
   return (
@@ -118,12 +119,12 @@ export function LoginPage() {
     setBusy(true);
     setError('');
     try {
-      await login({
+      const signedInUser = await login({
         email: formData.get('email'),
         password: formData.get('password'),
         rememberMe: formData.get('rememberMe') === 'on',
       });
-      navigate('/home', { replace: true });
+      navigate(roleHome(signedInUser.role), { replace: true });
     } catch (requestError) {
       setError(requestError.message);
     } finally {

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { CustomerDataContext } from './customerData';
+import { CustomerDataContext } from './customerContext';
 
 async function requestJson(path, options = {}) {
   let response;
@@ -54,8 +54,10 @@ export function CustomerDataProvider({ children }) {
         bookings.filter((booking) => booking.review).map((booking) => [booking.id, booking.review]),
       ));
       setError('');
+      return bookings;
     } catch (requestError) {
       setError(requestError.message);
+      return null;
     } finally {
       setLoading(false);
     }
@@ -68,7 +70,7 @@ export function CustomerDataProvider({ children }) {
       .then(async ({ user: currentUser }) => {
         if (!currentUser?.id) throw new Error('ข้อมูลผู้ใช้จาก Backend ไม่ถูกต้อง');
         if (active) setUser(currentUser);
-        await loadBookings();
+        if (currentUser.role === 'customer') await loadBookings();
       })
       .catch((requestError) => {
         if (!active) return;
@@ -96,7 +98,8 @@ export function CustomerDataProvider({ children }) {
     if (!signedInUser?.id) throw new Error('Backend ไม่ได้ส่งข้อมูลผู้ใช้กลับมา');
     setUser(signedInUser);
     setAuthError('');
-    await loadBookings();
+    if (signedInUser.role === 'customer') await loadBookings();
+    return signedInUser;
   };
 
   const register = async (details) => {
@@ -107,7 +110,8 @@ export function CustomerDataProvider({ children }) {
     if (!registeredUser?.id) throw new Error('Backend ไม่ได้ส่งข้อมูลผู้ใช้กลับมา');
     setUser(registeredUser);
     setAuthError('');
-    await loadBookings();
+    if (registeredUser.role === 'customer') await loadBookings();
+    return registeredUser;
   };
 
   const requestPasswordReset = async (email) => requestJson('/auth/password/forgot', {
@@ -163,6 +167,7 @@ export function CustomerDataProvider({ children }) {
       requestPasswordReset,
       resetPassword,
       logout,
+      refreshBookings: loadBookings,
       addBooking,
       saveReview,
     }}>

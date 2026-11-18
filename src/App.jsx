@@ -4,14 +4,29 @@ import { ForgotPasswordPage, ResetPasswordPage } from './components/PasswordRese
 import CustomerHome from './components/CustomerHome'; // นำเข้า Component ใหม่
 import CustomerProfile from './components/CustomerProfile';
 import { CustomerDataProvider } from './components/CustomerDataContext';
-import { useCustomerData } from './components/customerData';
+import { useCustomerData } from './components/customerContext';
+import AccountantDashboard from './components/AccountantDashboard';
+import AdminDashboard from './components/AdminDashboard';
+import ManagerDashboard from './components/ManagerDashboard';
+import TechnicianDashboard from './components/TechnicianDashboard';
+import { normalizeRole, roleHome } from './components/roles';
 
-function ProtectedRoute({ children }) {
+function ProtectedRoute({ children, roles }) {
   const { user, authLoading } = useCustomerData();
   if (authLoading) {
     return <div className="p-5 text-center">กำลังตรวจสอบการเข้าสู่ระบบ...</div>;
   }
-  return user ? children : <Navigate to="/login" replace />;
+  if (!user) return <Navigate to="/login" replace />;
+  if (roles && !roles.includes(normalizeRole(user.role))) {
+    return <Navigate to={roleHome(user.role)} replace />;
+  }
+  return children;
+}
+
+function HomeRedirect() {
+  const { user, authLoading } = useCustomerData();
+  if (authLoading) return <div className="p-5 text-center">กำลังตรวจสอบการเข้าสู่ระบบ...</div>;
+  return <Navigate to={user ? roleHome(user.role) : '/login'} replace />;
 }
 
 function App() {
@@ -20,13 +35,18 @@ function App() {
       <CustomerDataProvider>
         <div className="App bg-light min-vh-100 p-0 m-0">
           <Routes>
-            <Route path="/" element={<Navigate to="/login" replace />} />
+            <Route path="/" element={<HomeRedirect />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
             <Route path="/forgot-password" element={<ForgotPasswordPage />} />
             <Route path="/reset-password" element={<ResetPasswordPage />} />
-            <Route path="/home" element={<ProtectedRoute><CustomerHome /></ProtectedRoute>} />
-            <Route path="/profile" element={<ProtectedRoute><CustomerProfile /></ProtectedRoute>} />
+            <Route path="/home" element={<ProtectedRoute roles={['customer']}><CustomerHome /></ProtectedRoute>} />
+            <Route path="/profile" element={<ProtectedRoute roles={['customer']}><CustomerProfile /></ProtectedRoute>} />
+            <Route path="/technician" element={<ProtectedRoute roles={['technician']}><TechnicianDashboard /></ProtectedRoute>} />
+            <Route path="/accountant" element={<ProtectedRoute roles={['accountant']}><AccountantDashboard /></ProtectedRoute>} />
+            <Route path="/manager" element={<ProtectedRoute roles={['store_manager']}><ManagerDashboard /></ProtectedRoute>} />
+            <Route path="/admin" element={<ProtectedRoute roles={['system_admin']}><AdminDashboard /></ProtectedRoute>} />
+            <Route path="*" element={<HomeRedirect />} />
           </Routes>
         </div>
       </CustomerDataProvider>
