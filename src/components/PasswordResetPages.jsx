@@ -118,11 +118,11 @@ export function ResetPasswordPage() {
         <form onSubmit={handleSubmit}>
           <div className="mb-3">
             <label htmlFor="newPassword" className="form-label fw-semibold">รหัสผ่านใหม่</label>
-            <input id="newPassword" name="password" type="password" className="form-control" autoComplete="new-password" minLength={8} maxLength={72} required />
+            <input id="newPassword" name="password" type="password" className="form-control" autoComplete="new-password" minLength={6} maxLength={72} required />
           </div>
           <div className="mb-3">
             <label htmlFor="confirmPassword" className="form-label fw-semibold">ยืนยันรหัสผ่านใหม่</label>
-            <input id="confirmPassword" name="confirmPassword" type="password" className="form-control" autoComplete="new-password" minLength={8} maxLength={72} required />
+            <input id="confirmPassword" name="confirmPassword" type="password" autoComplete="new-password" minLength={6} maxLength={72} required />
           </div>
           <button type="submit" className="btn text-white w-100 fw-bold" disabled={busy} style={{ padding: '0.85rem', borderRadius: '1rem', background: 'linear-gradient(135deg, #003a7a 0%, #0d6efd 100%)', border: 'none' }}>
             {busy ? 'กำลังบันทึก...' : 'บันทึกรหัสผ่านใหม่'}

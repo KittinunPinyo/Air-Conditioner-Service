@@ -1,0 +1,480 @@
+/* ========================================================
+   Manager Dashboard Theme - Executive Operations Control
+   ======================================================== */
+
+/* Quick Status Strip (Compact Top Bar) */
+.mgr-quick-bar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.65rem 1.25rem;
+  background: #ffffff;
+  border: 1px solid #e0ecfb;
+  border-radius: 1rem;
+  padding: 0.75rem 1.25rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 2px 10px rgba(7, 25, 56, 0.03);
+}
+
+.mgr-quick-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.85rem;
+}
+
+.mgr-quick-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.mgr-quick-label {
+  color: #64748b;
+  font-weight: 500;
+}
+
+.mgr-quick-val {
+  font-family: 'Plus Jakarta Sans', 'Prompt', sans-serif;
+  font-weight: 700;
+  color: #0c2b5e;
+}
+
+/* Tab Switcher */
+.mgr-tabs-container {
+  margin-bottom: 1.25rem;
+  overflow-x: auto;
+  padding-bottom: 0.25rem;
+}
+
+.mgr-tabs {
+  display: inline-flex;
+  background: #e2edf9;
+  padding: 0.3rem;
+  border-radius: 0.95rem;
+  gap: 0.35rem;
+  border: 1px solid #cbdff5;
+}
+
+.mgr-tab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.55rem 1.15rem;
+  border-radius: 0.75rem;
+  border: none;
+  background: transparent;
+  color: #334155;
+  font-size: 0.865rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.mgr-tab-btn:hover {
+  color: #1d4ed8;
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.mgr-tab-btn.active {
+  background: #ffffff;
+  color: #1d4ed8;
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(7, 25, 56, 0.08);
+}
+
+.mgr-tab-pill {
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  background: #e2e8f0;
+  color: #475569;
+}
+
+.mgr-tab-btn.active .mgr-tab-pill {
+  background: #eff6ff;
+  color: #1d4ed8;
+}
+
+.mgr-tab-pill.warning {
+  background: #fef3c7 !important;
+  color: #b45309 !important;
+}
+
+.mgr-tab-pill.danger {
+  background: #fee2e2 !important;
+  color: #dc2626 !important;
+}
+
+/* KPI Metric Cards (Compact Edition) */
+.mgr-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.mgr-kpi-card {
+  background: #ffffff;
+  border: 1px solid #e0ecfb;
+  border-radius: 1rem;
+  padding: 1rem 1.2rem;
+  box-shadow: 0 2px 12px rgba(7, 25, 56, 0.03);
+  position: relative;
+  overflow: hidden;
+  transition: all 0.25s ease;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.mgr-kpi-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(7, 25, 56, 0.06);
+}
+
+.mgr-kpi-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3.5px;
+  background: linear-gradient(90deg, #1d4ed8, #06b6d4);
+}
+
+.mgr-kpi-card.kpi-rating::before {
+  background: linear-gradient(90deg, #f59e0b, #fbbf24);
+}
+
+.mgr-kpi-card.kpi-reviews::before {
+  background: linear-gradient(90deg, #0ea5e9, #38bdf8);
+}
+
+.mgr-kpi-title {
+  font-size: 0.785rem;
+  font-weight: 600;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 0.2rem;
+}
+
+.mgr-kpi-value {
+  font-family: 'Plus Jakarta Sans', 'Prompt', sans-serif;
+  font-size: 1.65rem;
+  font-weight: 800;
+  color: #0c2b5e;
+  line-height: 1.1;
+}
+
+.mgr-kpi-sub {
+  font-size: 0.725rem;
+  color: #94a3b8;
+  margin-top: 0.15rem;
+}
+
+.mgr-kpi-icon-wrap {
+  width: 44px;
+  height: 44px;
+  border-radius: 0.85rem;
+  background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+  color: #1d4ed8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.mgr-kpi-card.kpi-rating .mgr-kpi-icon-wrap {
+  background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+  color: #d97706;
+}
+
+.mgr-kpi-card.kpi-reviews .mgr-kpi-icon-wrap {
+  background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+  color: #15803d;
+}
+
+/* Dispatch & Schedule Table */
+.mgr-table-wrapper {
+  background: #ffffff;
+  border-radius: 1rem;
+  border: 1px solid #e0ecfb;
+  box-shadow: 0 2px 12px rgba(7, 25, 56, 0.02);
+  overflow: hidden;
+}
+
+.mgr-table {
+  width: 100%;
+  margin-bottom: 0;
+}
+
+.mgr-table thead th {
+  background: linear-gradient(90deg, #f8fbff 0%, #f1f6fc 100%) !important;
+  color: #334155 !important;
+  font-size: 0.785rem !important;
+  font-weight: 700 !important;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 0.75rem 1rem !important;
+  border-bottom: 1.5px solid #dce8f8 !important;
+  white-space: nowrap;
+}
+
+.mgr-table tbody td {
+  padding: 0.75rem 1rem !important;
+  font-size: 0.865rem;
+  border-bottom: 1px solid #f1f5f9;
+  vertical-align: middle;
+}
+
+.mgr-table tbody tr:hover td {
+  background-color: #f8fbfe;
+}
+
+.mgr-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* Job ID Pill */
+.mgr-job-badge {
+  font-family: 'Plus Jakarta Sans', monospace;
+  font-size: 0.76rem;
+  font-weight: 800;
+  color: #1d4ed8;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  padding: 0.15rem 0.45rem;
+  border-radius: 6px;
+  display: inline-block;
+  margin-bottom: 0.15rem;
+}
+
+/* Service Type Tag */
+.mgr-service-title {
+  font-weight: 700;
+  color: #0f172a;
+  font-size: 0.885rem;
+}
+
+.mgr-datetime-chip {
+  font-size: 0.75rem;
+  color: #475569;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-top: 0.15rem;
+}
+
+/* Customer & Location Cell */
+.mgr-customer-name {
+  font-weight: 700;
+  color: #0f172a;
+  font-size: 0.885rem;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.mgr-address-row {
+  font-size: 0.785rem;
+  color: #64748b;
+  margin-top: 0.15rem;
+  line-height: 1.3;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.35rem;
+}
+
+.mgr-address-link {
+  color: #2563eb;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.725rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin-top: 0.15rem;
+}
+
+.mgr-address-link:hover {
+  text-decoration: underline;
+  color: #1d4ed8;
+}
+
+/* Price Box in Table */
+.mgr-price-tag {
+  font-family: 'Plus Jakarta Sans', 'Prompt', sans-serif;
+  font-weight: 700;
+  font-size: 0.885rem;
+  color: #0c2b5e;
+  margin-top: 0.25rem;
+}
+
+.mgr-price-tag.final {
+  color: #059669;
+}
+
+/* Technician Assignment Cell */
+.mgr-assign-box {
+  min-width: 190px;
+}
+
+.mgr-tech-select {
+  border: 1.5px solid #dce8f8 !important;
+  border-radius: 0.65rem !important;
+  padding: 0.4rem 0.75rem !important;
+  font-size: 0.825rem !important;
+  font-weight: 600 !important;
+  color: #0f172a !important;
+  background-color: #ffffff !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+  transition: all 0.2s ease !important;
+}
+
+.mgr-tech-select:focus {
+  border-color: #2563eb !important;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15) !important;
+}
+
+.mgr-tech-select:disabled {
+  background-color: #f8fafc !important;
+  color: #94a3b8 !important;
+  border-color: #e2e8f0 !important;
+  cursor: not-allowed;
+}
+
+.mgr-tech-status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  display: inline-block;
+  background-color: #10b981;
+}
+
+/* Technician Leaderboard Avatar */
+.mgr-tech-avatar {
+  border-radius: 50%;
+  background: linear-gradient(135deg, #1d4ed8, #06b6d4);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+
+/* Reviews Grid */
+.mgr-review-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.75rem;
+  max-height: 380px;
+  overflow-y: auto;
+  padding-right: 0.25rem;
+}
+
+.mgr-review-card {
+  background: #ffffff;
+  border: 1px solid #e2edf9;
+  border-radius: 0.85rem;
+  padding: 0.85rem 1rem;
+  box-shadow: 0 1px 4px rgba(7, 25, 56, 0.02);
+  display: flex;
+  flex-direction: column;
+  transition: all 0.2s ease;
+}
+
+.mgr-review-card:hover {
+  box-shadow: 0 4px 12px rgba(7, 25, 56, 0.05);
+  border-color: #bfdbfe;
+}
+
+.mgr-stars {
+  color: #f59e0b;
+  letter-spacing: 0.08em;
+  font-size: 0.875rem;
+}
+
+/* Approval Requests */
+.mgr-req-badge {
+  font-size: 0.725rem;
+  font-weight: 700;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.mgr-req-badge.discount {
+  background: #fef3c7;
+  color: #b45309;
+  border: 1px solid #fde68a;
+}
+
+.mgr-req-badge.purchase {
+  background: #e0f2fe;
+  color: #0369a1;
+  border: 1px solid #bae6fd;
+}
+
+.mgr-btn-approve {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+  color: #ffffff !important;
+  font-weight: 700 !important;
+  border: none !important;
+  border-radius: 0.55rem !important;
+  padding: 0.35rem 0.85rem !important;
+  font-size: 0.8rem !important;
+  box-shadow: 0 2px 6px rgba(16, 185, 129, 0.25) !important;
+  transition: all 0.2s ease !important;
+}
+
+.mgr-btn-approve:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 3px 10px rgba(16, 185, 129, 0.35) !important;
+}
+
+.mgr-btn-reject {
+  background: #ffffff !important;
+  color: #dc2626 !important;
+  border: 1.5px solid #fca5a5 !important;
+  font-weight: 700 !important;
+  border-radius: 0.55rem !important;
+  padding: 0.35rem 0.85rem !important;
+  font-size: 0.8rem !important;
+  transition: all 0.2s ease !important;
+}
+
+.mgr-btn-reject:hover:not(:disabled) {
+  background: #fee2e2 !important;
+  border-color: #ef4444 !important;
+  color: #b91c1c !important;
+}
+
+/* Empty State Box (Compact) */
+.mgr-empty-state {
+  text-align: center;
+  padding: 1.75rem 1.25rem;
+  background: #f8fbfe;
+  border-radius: 0.85rem;
+  border: 1.5px dashed #cbd5e1;
+}
+
+.mgr-empty-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #e2edf9;
+  color: #3b82f6;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0.5rem;
+}

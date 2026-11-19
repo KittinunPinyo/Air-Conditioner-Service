@@ -220,8 +220,8 @@ export function RegisterPage() {
         <AuthField id="registerName" label="ชื่อ - นามสกุล" name="fullName" type="text" autoComplete="name" minLength={2} maxLength={120} />
         <AuthField id="registerPhone" label="เบอร์โทรศัพท์สำหรับติดต่อ" name="phone" type="tel" autoComplete="tel" maxLength={20} />
         <AuthField id="registerEmail" label="อีเมล" name="email" type="email" autoComplete="email" maxLength={254} />
-        <AuthField id="registerPassword" label="รหัสผ่าน (อย่างน้อย 8 ตัวอักษร)" name="password" type="password" autoComplete="new-password" minLength={8} maxLength={72} />
-        <AuthField id="registerConfirmPassword" label="ยืนยันรหัสผ่าน" name="confirmPassword" type="password" autoComplete="new-password" minLength={8} maxLength={72} />
+        <AuthField id="registerPassword" label="รหัสผ่าน (อย่างน้อย 6 ตัวอักษร)" name="password" type="password" autoComplete="new-password" minLength={6} maxLength={72} />
+        <AuthField id="registerConfirmPassword" label="ยืนยันรหัสผ่าน" name="confirmPassword" type="password" autoComplete="new-password" minLength={6} maxLength={72} />
         <AuthSubmitButton busy={busy}>สมัครสมาชิก</AuthSubmitButton>
         {authError && !error && <div className="alert alert-warning py-2 small" role="alert">{authError}</div>}
         {error && <div className="alert alert-danger py-2 small" role="alert">{error}</div>}

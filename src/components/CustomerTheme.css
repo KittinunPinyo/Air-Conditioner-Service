@@ -1,0 +1,639 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Prompt:wght@300;400;500;600;700&display=swap');
+
+/* ========================================================
+   Customer Theme 2.0 - Arctic Luxe & Oceanic Sapphire
+   ======================================================== */
+
+:root {
+  --c-primary: #1d4ed8;
+  --c-primary-hover: #1e40af;
+  --c-primary-light: #eff6ff;
+  --c-primary-border: #bfdbfe;
+  --c-sapphire-dark: #071938;
+  --c-sapphire-mid: #0d3875;
+  --c-sapphire-bright: #1e5bb8;
+  --c-cyan: #0284c7;
+  --c-cyan-light: #e0f2fe;
+  --c-electric: #38bdf8;
+  --c-text-main: #0f172a;
+  --c-text-muted: #64748b;
+  --c-card-bg: #ffffff;
+}
+
+.customer-theme {
+  font-family: 'Prompt', 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  color: var(--c-text-main);
+  background-color: #f3f8fd;
+  background-image: 
+    radial-gradient(at 10% 10%, rgba(6, 182, 212, 0.09) 0px, transparent 55%),
+    radial-gradient(at 90% 15%, rgba(29, 78, 216, 0.08) 0px, transparent 50%),
+    radial-gradient(at 50% 90%, rgba(14, 165, 233, 0.06) 0px, transparent 60%);
+  background-attachment: fixed;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ================= Navbar (Oceanic Sapphire Hero Bar) ================= */
+.customer-navbar {
+  background: linear-gradient(135deg, #071938 0%, #0c3370 50%, #0369a1 100%) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 4px 25px -2px rgba(7, 25, 56, 0.35);
+  position: relative;
+  overflow: hidden;
+}
+
+.customer-navbar::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at 80% -20%, rgba(56, 189, 248, 0.2) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+.customer-brand-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  text-decoration: none;
+  position: relative;
+  z-index: 1;
+}
+
+.customer-brand-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #38bdf8 0%, #2563eb 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  box-shadow: 0 4px 14px rgba(56, 189, 248, 0.35);
+  flex-shrink: 0;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.customer-brand-text {
+  font-family: 'Plus Jakarta Sans', 'Prompt', sans-serif;
+  font-weight: 800;
+  font-size: 1.45rem;
+  letter-spacing: -0.03em;
+  color: #ffffff;
+}
+
+.customer-brand-tag {
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #38bdf8;
+  background: rgba(56, 189, 248, 0.18);
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  border: 1px solid rgba(56, 189, 248, 0.35);
+}
+
+/* User Pill in Navbar (Frosted Glass) */
+.customer-user-chip {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.35rem 0.75rem 0.35rem 0.45rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transition: all 0.2s ease;
+  text-decoration: none;
+  position: relative;
+  z-index: 1;
+}
+
+.customer-user-chip:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.35);
+  transform: translateY(-1px);
+}
+
+.customer-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #38bdf8, #1d4ed8);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 0.95rem;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.3);
+  flex-shrink: 0;
+}
+
+.customer-user-name {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #ffffff;
+  max-width: 150px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.customer-logout-btn {
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  background: rgba(239, 68, 68, 0.18) !important;
+  color: #fca5a5 !important;
+  font-weight: 600 !important;
+  font-size: 0.825rem !important;
+  padding: 0.45rem 1rem !important;
+  border-radius: 999px !important;
+  transition: all 0.2s ease !important;
+  position: relative;
+  z-index: 1;
+}
+
+.customer-logout-btn:hover {
+  background: #ef4444 !important;
+  color: #ffffff !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.35);
+}
+
+/* ================= Cards ================= */
+.customer-card {
+  background: #ffffff;
+  border: 1px solid rgba(219, 234, 254, 0.9);
+  border-radius: 1.5rem;
+  box-shadow: 0 12px 36px -8px rgba(7, 25, 56, 0.06), 0 1px 3px rgba(0, 0, 0, 0.02);
+  transition: all 0.25s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.customer-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #1d4ed8 0%, #06b6d4 50%, #38bdf8 100%);
+  opacity: 0.9;
+}
+
+.customer-card:hover {
+  box-shadow: 0 18px 45px -8px rgba(7, 25, 56, 0.09), 0 1px 4px rgba(0, 0, 0, 0.03);
+}
+
+.customer-card-title {
+  color: #0c2b5e;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.customer-card-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+  color: #1d4ed8;
+  font-size: 1rem;
+  border: 1px solid rgba(191, 219, 254, 0.8);
+  box-shadow: 0 2px 6px rgba(29, 78, 216, 0.08);
+}
+
+/* ================= Category Selector Grid ================= */
+.customer-category-tabs {
+  background: #f1f6fd;
+  padding: 0.4rem;
+  border-radius: 1.15rem;
+  border: 1.5px solid #dce8f8;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.customer-category-tab {
+  flex: 1 1 0;
+  min-width: 100px;
+  padding: 0.75rem 0.9rem;
+  border-radius: 0.85rem;
+  border: none;
+  font-size: 0.885rem;
+  font-weight: 600;
+  color: #475569;
+  background: transparent;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.customer-category-tab:hover:not(.active) {
+  color: #0c2b5e;
+  background: rgba(255, 255, 255, 0.8);
+  transform: translateY(-1px);
+}
+
+.customer-category-tab.active {
+  background: linear-gradient(135deg, #1d4ed8 0%, #0284c7 100%);
+  color: #ffffff;
+  font-weight: 700;
+  box-shadow: 0 6px 18px -1px rgba(29, 78, 216, 0.35);
+  transform: translateY(-1px);
+}
+
+/* ================= Form Controls ================= */
+.customer-form-label {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #0c2b5e;
+  margin-bottom: 0.45rem;
+}
+
+.customer-form-label svg {
+  color: #2563eb;
+  flex-shrink: 0;
+}
+
+.customer-input,
+.customer-select {
+  background-color: #f8fbfe !important;
+  border: 1.5px solid #dce8f6 !important;
+  border-radius: 0.95rem !important;
+  padding: 0.8rem 1rem !important;
+  font-size: 0.925rem !important;
+  font-weight: 500 !important;
+  color: #0f172a !important;
+  transition: all 0.2s ease !important;
+  box-shadow: none !important;
+}
+
+.customer-input:hover,
+.customer-select:hover {
+  border-color: #93c5fd !important;
+  background-color: #ffffff !important;
+}
+
+.customer-input:focus,
+.customer-select:focus {
+  background-color: #ffffff !important;
+  border-color: #2563eb !important;
+  box-shadow: 0 0 0 3.5px rgba(37, 99, 235, 0.16) !important;
+  outline: none !important;
+}
+
+/* ================= Smart Price Ticket Box ================= */
+.customer-price-box {
+  background: linear-gradient(135deg, #071f48 0%, #0d3875 55%, #0284c7 100%);
+  border-radius: 1.25rem;
+  padding: 1.65rem 1.5rem;
+  color: #ffffff;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 14px 32px -4px rgba(7, 31, 72, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-left: 4px solid #38bdf8;
+}
+
+.customer-price-box::before {
+  content: '';
+  position: absolute;
+  top: -60%;
+  left: -20%;
+  width: 140%;
+  height: 220%;
+  background: radial-gradient(circle, rgba(56, 189, 248, 0.15) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+.customer-price-watermark {
+  position: absolute;
+  right: -15px;
+  bottom: -20px;
+  width: 150px;
+  height: 150px;
+  opacity: 0.14;
+  color: #ffffff;
+  pointer-events: none;
+  animation: floatSlow 12s ease-in-out infinite alternate;
+}
+
+@keyframes floatSlow {
+  0% { transform: rotate(0deg) scale(1); }
+  100% { transform: rotate(18deg) scale(1.1); }
+}
+
+.customer-price-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #e0f2fe;
+  background: rgba(255, 255, 255, 0.14);
+  padding: 0.3rem 0.8rem;
+  border-radius: 999px;
+  backdrop-filter: blur(8px);
+  margin-bottom: 0.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+}
+
+.customer-price-amount {
+  font-family: 'Plus Jakarta Sans', 'Prompt', sans-serif;
+  font-size: 2.45rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin: 0.25rem 0;
+  color: #ffffff;
+  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.3);
+}
+
+/* ================= Primary CTA Submit Button ================= */
+.customer-submit-btn {
+  width: 100%;
+  padding: 1.05rem 1.5rem !important;
+  border-radius: 1rem !important;
+  font-size: 1.05rem !important;
+  font-weight: 700 !important;
+  color: #ffffff !important;
+  background: linear-gradient(135deg, #1d4ed8 0%, #0284c7 100%) !important;
+  border: none !important;
+  box-shadow: 0 8px 24px -2px rgba(29, 78, 216, 0.38) !important;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  cursor: pointer;
+}
+
+.customer-submit-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 30px -2px rgba(29, 78, 216, 0.48) !important;
+  filter: brightness(1.06);
+}
+
+.customer-submit-btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.customer-submit-btn:disabled {
+  background: #cbd5e1 !important;
+  color: #64748b !important;
+  box-shadow: none !important;
+  cursor: not-allowed;
+}
+
+/* ================= Live Radar Beacon & Empty State ================= */
+.customer-live-beacon {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #059669;
+  background: #ecfdf5;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.customer-live-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #10b981;
+  display: inline-block;
+  box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.25);
+  animation: pulseDot 2s infinite;
+}
+
+@keyframes pulseDot {
+  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.5); }
+  70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+}
+
+.customer-empty-state {
+  background: #f8fbff;
+  border: 1.5px dashed #bfdbfe;
+  border-radius: 1.25rem;
+  padding: 3rem 1.5rem;
+  text-align: center;
+}
+
+.customer-empty-icon {
+  width: 62px;
+  height: 62px;
+  border-radius: 18px;
+  background: linear-gradient(135deg, #e0f2fe 0%, #bfdbfe 100%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #1d4ed8;
+  margin-bottom: 1rem;
+  box-shadow: 0 4px 14px rgba(29, 78, 216, 0.12);
+}
+
+/* ================= Promo Card ================= */
+.customer-promo-card {
+  background: linear-gradient(135deg, #eef6ff 0%, #dbeafe 60%, #e0f2fe 100%);
+  border: 1px solid rgba(191, 219, 254, 0.9);
+  border-radius: 1.25rem;
+  padding: 1.4rem 1.25rem;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 16px -2px rgba(29, 78, 216, 0.06);
+}
+
+.customer-promo-title {
+  color: #0c2b5e;
+  font-weight: 700;
+  font-size: 0.985rem;
+  margin-bottom: 0.35rem;
+  line-height: 1.4;
+}
+
+.customer-promo-desc {
+  color: #475569;
+  font-size: 0.835rem;
+  line-height: 1.5;
+  margin-bottom: 0.65rem;
+}
+
+.customer-promo-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  justify-content: center;
+}
+
+.customer-promo-tag {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #1d4ed8;
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(191, 219, 254, 0.8);
+  padding: 0.2rem 0.55rem;
+  border-radius: 6px;
+}
+
+/* ================= Online Payment Banner ================= */
+.customer-payment-card {
+  background: linear-gradient(135deg, #ffffff 0%, #f4f8fe 100%);
+  border: 1px solid rgba(219, 234, 254, 0.95);
+  border-radius: 1.5rem;
+  box-shadow: 0 8px 26px -4px rgba(7, 25, 56, 0.05);
+  position: relative;
+  overflow: hidden;
+}
+
+.customer-pill-soon {
+  background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+  color: #475569;
+  font-size: 0.825rem;
+  font-weight: 700;
+  padding: 0.45rem 1.2rem;
+  border-radius: 999px;
+  border: 1px solid #cbd5e1;
+}
+
+/* ================= Stepper Timeline ================= */
+.customer-stepper-node {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.78rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.customer-stepper-node.complete {
+  background: #10b981;
+  color: #ffffff;
+  box-shadow: 0 2px 6px rgba(16, 185, 129, 0.25);
+}
+
+.customer-stepper-node.current {
+  background: #2563eb;
+  color: #ffffff;
+  box-shadow: 0 0 0 3.5px rgba(37, 99, 235, 0.2);
+}
+
+.customer-stepper-node.waiting {
+  background: #ffffff;
+  color: #94a3b8;
+  border: 1.5px solid #cbd5e1;
+}
+
+/* ================= Profile Page Extras ================= */
+.customer-profile-avatar-box {
+  position: relative;
+  display: inline-block;
+  margin-bottom: 1rem;
+}
+
+.customer-profile-avatar {
+  width: 88px;
+  height: 88px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #1d4ed8 0%, #06b6d4 100%);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.3rem;
+  font-weight: 800;
+  box-shadow: 0 0 0 5px #ffffff, 0 10px 28px rgba(29, 78, 216, 0.28);
+  margin: 0 auto;
+}
+
+/* 2-Column Mini Stat Cards for Profile */
+.customer-stat-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.6rem;
+  margin-bottom: 1.2rem;
+}
+
+.customer-stat-card {
+  padding: 0.75rem;
+  border-radius: 0.9rem;
+  background: #f8fbfe;
+  border: 1px solid #e2edf9;
+  text-align: center;
+}
+
+.customer-stat-card .val {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #1d4ed8;
+  line-height: 1.2;
+}
+
+.customer-stat-card .lbl {
+  font-size: 0.725rem;
+  color: #64748b;
+  margin-top: 0.15rem;
+}
+
+.customer-info-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.7rem 0.9rem;
+  border-radius: 0.9rem;
+  background: #f8fbff;
+  border: 1px solid #eef4fc;
+  margin-bottom: 0.65rem;
+}
+
+.customer-info-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: #e0f2fe;
+  color: #0284c7;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.customer-back-btn {
+  background: linear-gradient(135deg, #1d4ed8 0%, #0284c7 100%) !important;
+  color: #ffffff !important;
+  font-weight: 600 !important;
+  border: none !important;
+  border-radius: 999px !important;
+  padding: 0.55rem 1.4rem !important;
+  box-shadow: 0 4px 14px rgba(29, 78, 216, 0.25) !important;
+  transition: all 0.2s ease !important;
+}
+
+.customer-back-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(29, 78, 216, 0.35) !important;
+  filter: brightness(1.05);
+}

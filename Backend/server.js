@@ -1,4 +1,4 @@
-import 'dotenv/config';
+import dotenv from 'dotenv';
 import { createHash, randomBytes, randomUUID } from 'node:crypto';
 import { mkdir, readFile, unlink, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
@@ -11,6 +11,10 @@ import express from 'express';
 import rateLimit from 'express-rate-limit';
 import multer from 'multer';
 import nodemailer from 'nodemailer';
+
+dotenv.config({
+  path: resolve(fileURLToPath(new URL('.', import.meta.url)), '.env'),
+});
 
 if (!process.env.DATABASE_URL) {
   throw new Error('DATABASE_URL is required. Add it to Backend/.env.');
@@ -241,8 +245,8 @@ export function validateRegistration(body) {
   if (!phonePattern.test(phone)) {
     return { error: 'กรุณากรอกเบอร์โทรศัพท์ 9 ถึง 15 หลัก' };
   }
-  if (Buffer.byteLength(password, 'utf8') < 8 || Buffer.byteLength(password, 'utf8') > 72) {
-    return { error: 'รหัสผ่านต้องมีความยาวอย่างน้อย 8 ตัวอักษร และไม่เกิน 72 ไบต์' };
+  if (password.length < 6 || Buffer.byteLength(password, 'utf8') > 72) {
+    return { error: 'รหัสผ่านต้องมีความยาวอย่างน้อย 6 ตัวอักษร และไม่เกิน 72 ไบต์' };
   }
   if (password !== body.confirmPassword) {
     return { error: 'รหัสผ่านและการยืนยันรหัสผ่านไม่ตรงกัน' };
@@ -281,8 +285,8 @@ export function validatePasswordReset(body) {
   if (!/^[A-Za-z0-9_-]{20,128}$/.test(token)) {
     return { error: 'ลิงก์รีเซ็ตรหัสผ่านไม่ถูกต้องหรือหมดอายุแล้ว' };
   }
-  if (Buffer.byteLength(password, 'utf8') < 8 || Buffer.byteLength(password, 'utf8') > 72) {
-    return { error: 'รหัสผ่านต้องมีความยาวอย่างน้อย 8 ตัวอักษร และไม่เกิน 72 ไบต์' };
+  if (password.length < 6 || Buffer.byteLength(password, 'utf8') > 72) {
+    return { error: 'รหัสผ่านต้องมีความยาวอย่างน้อย 6 ตัวอักษร และไม่เกิน 72 ไบต์' };
   }
   if (password !== body.confirmPassword) {
     return { error: 'รหัสผ่านและการยืนยันรหัสผ่านไม่ตรงกัน' };
@@ -1343,7 +1347,7 @@ app.get('/api/technician/earnings', requireAuth, requireRole('technician'), asyn
 
 app.get('/api/manager/operations', requireAuth, requireRole('store_manager'), async (request, response) => {
   const rows = await sql`
-    SELECT b.id, b.service_type, b.status, b.appointment_date, b.time_slot, b.address,
+    SELECT b.id, b.service_type, b.issue, b.status, b.appointment_date, b.time_slot, b.address,
       b.estimated_min, b.estimated_max, b.final_price, b.technician_id,
       c.full_name AS customer_name, t.full_name AS technician_name,
       category.name AS category_name
@@ -1360,6 +1364,7 @@ app.get('/api/manager/operations', requireAuth, requireRole('store_manager'), as
     bookings: rows.map((row) => ({
       id: toPublicId(row.id),
       serviceType: row.service_type,
+      issue: row.issue,
       categoryName: row.category_name,
       status: row.status,
       date: String(row.appointment_date).slice(0, 10),

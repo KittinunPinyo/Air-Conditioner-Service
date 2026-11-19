@@ -22,6 +22,13 @@ export async function api(path, options = {}) {
   return payload;
 }
 
+export function getServiceLabel(serviceType, issue) {
+  if (serviceType === 'install') return 'งานติดตั้ง / ย้ายแอร์';
+  if (serviceType === 'repair' && issue === 'clean') return 'งานล้างแอร์';
+  if (serviceType === 'repair') return 'งานซ่อมแอร์';
+  return serviceType || 'บริการแอร์';
+}
+
 export function useResource(path, refresh = 0) {
   const [result, setResult] = useState({ key: '', data: null, error: '' });
   const key = `${path}:${refresh}`;
