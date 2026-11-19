@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import { Dashboard, DateRange, Empty, Money, MutationFeedback, Panel, ResourceState, StatusBadge } from './StaffDashboardCommon';
 import { api, monthStart, today, useMutation, useResource } from './StaffDashboardUtils';
+import './AccountantTheme.css';
 
 export default function AccountantDashboard() {
   const [refresh, setRefresh] = useState(0);
+  const [activeTab, setActiveTab] = useState('overview');
   const [from, setFrom] = useState(monthStart);
   const [to, setTo] = useState(today);
   const query = `?from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}`;
@@ -20,22 +22,50 @@ export default function AccountantDashboard() {
     }), 'บันทึกผลตรวจสอบแล้ว')) setRefresh((value) => value + 1);
   };
 
-  return <Dashboard title="การเงินและบัญชี" subtitle="ตรวจสอบหลักฐานชำระเงิน ติดตามรายรับ ใบแจ้งหนี้ และเงินเดือนช่าง">
-    <div className="d-flex justify-content-end mb-3"><DateRange {...{ from, to, setFrom, setTo }} /></div>
+  return <Dashboard title="การเงินและบัญชี" subtitle="จัดการรายรับ ตรวจสอบการชำระเงิน เงินเดือนช่าง และใบแจ้งหนี้">
+    <div className="accountant-workspace">
+    <div className="accountant-toolbar">
+      <div>
+        <h2 className="h6 fw-bold mb-1">ช่วงเวลารายงาน</h2>
+        <p className="small text-secondary mb-0">เลือกช่วงวันที่เพื่อกรองรายรับและเงินเดือน</p>
+      </div>
+      <div className="accountant-date-range"><DateRange {...{ from, to, setFrom, setTo }} /></div>
+    </div>
     <MutationFeedback mutation={mutation} />
-    <Panel title="สรุปการเงิน">
-      <ResourceState {...financials} />
+    <nav className="accountant-tabs mb-4" aria-label="เมนูการเงินและบัญชี">
+      {[
+        { id: 'overview', label: 'สรุปการเงิน' },
+        { id: 'payments', label: 'ตรวจสอบการชำระเงิน', count: payments.data?.payments?.filter((item) => item.status === 'pending').length },
+        { id: 'payroll', label: 'เงินเดือนช่าง' },
+        { id: 'invoices', label: 'ใบแจ้งหนี้', count: invoices.data?.invoices?.length },
+      ].map((tab) => (
+        <button
+          key={tab.id}
+          type="button"
+          className={`accountant-tab${activeTab === tab.id ? ' active' : ''}`}
+          aria-pressed={activeTab === tab.id}
+          onClick={() => setActiveTab(tab.id)}
+        >
+          <span>{tab.label}</span>
+          {tab.count != null && <span className="accountant-tab-count">{tab.count}</span>}
+        </button>
+      ))}
+    </nav>
+    {activeTab === 'overview' && <Panel title="สรุปการเงิน">
+      <ResourceState {...financials} onRetry={() => setRefresh((value) => value + 1)} />
       {financials.data && <>
-        <div className="row g-3 mb-3">
-          {[['รายรับ', <Money amount={financials.data.income} />], ['ชำระแล้ว', financials.data.paidCount], ['รอดำเนินการ', financials.data.pendingCount]].map(([label, value]) =>
-            <div className="col-12 col-md-4" key={label}><div className="staff-stat"><small>{label}</small><strong>{value}</strong></div></div>)}
+        <div className="accountant-summary-grid mb-4">
+          {[['รายรับรวม', <Money amount={financials.data.income} />], ['ชำระแล้ว', financials.data.paidCount], ['รอดำเนินการ', financials.data.pendingCount]].map(([label, value]) =>
+            <div className="accountant-summary-card" key={label}><small>{label}</small><strong>{value}</strong></div>)}
         </div>
-        <div className="table-responsive"><table className="table"><thead><tr><th>วันที่</th><th>รายรับ</th></tr></thead><tbody>
-          {(financials.data.daily || []).map((item) => <tr key={item.date}><td>{item.date}</td><td><Money amount={item.amount} /></td></tr>)}
-        </tbody></table></div>
+        {(financials.data.daily || []).length ? (
+          <div className="table-responsive accountant-table-wrap"><table className="table align-middle mb-0"><thead><tr><th>วันที่</th><th>รายรับ</th></tr></thead><tbody>
+            {financials.data.daily.map((item) => <tr key={item.date}><td>{item.date}</td><td><Money amount={item.amount} /></td></tr>)}
+          </tbody></table></div>
+        ) : <Empty>ไม่มีรายรับในช่วงวันที่เลือก</Empty>}
       </>}
-    </Panel>
-    <Panel title="ตรวจสอบการชำระเงิน">
+    </Panel>}
+    {activeTab === 'payments' && <Panel title="ตรวจสอบการชำระเงิน">
       <ResourceState {...payments} onRetry={() => setRefresh((value) => value + 1)} />
       {payments.data && (payments.data.payments?.length ? <div className="table-responsive"><table className="table align-middle">
         <thead><tr><th>งาน / ลูกค้า</th><th>ยอด</th><th>สถานะ</th><th>หลักฐาน / การตรวจสอบ</th></tr></thead>
@@ -48,19 +78,19 @@ export default function AccountantDashboard() {
               <button className="btn btn-sm btn-outline-danger" disabled={mutation.busy || payment.status !== 'pending'} onClick={() => review(payment, 'reject')}>ปฏิเสธ</button></div>
           </td>
         </tr>)}</tbody></table></div> : <Empty>ไม่มีรายการชำระเงิน</Empty>)}
-    </Panel>
-    <Panel title="เงินเดือนและคอมมิชชันช่าง">
-      <ResourceState {...payroll} />
+    </Panel>}
+    {activeTab === 'payroll' && <Panel title="เงินเดือนและคอมมิชชันช่าง">
+      <ResourceState {...payroll} onRetry={() => setRefresh((value) => value + 1)} />
       {payroll.data && (payroll.data.payroll?.length ? <div className="table-responsive"><table className="table align-middle"><thead><tr><th>ช่าง</th><th>จำนวนงาน</th><th>ค่าตอบแทน</th><th>คอมมิชชัน</th></tr></thead><tbody>
         {payroll.data.payroll.map((item) => <tr key={item.technicianId}><td>{item.name}</td><td>{item.jobCount}</td><td><Money amount={item.amount} /></td><td><Money amount={item.commission} /></td></tr>)}
       </tbody></table></div> : <Empty>ไม่มีข้อมูลเงินเดือนในช่วงวันที่เลือก</Empty>)}
-    </Panel>
-    <Panel title="ใบแจ้งหนี้">
+    </Panel>}
+    {activeTab === 'invoices' && <Panel title="ใบแจ้งหนี้">
       <ResourceState {...invoices} onRetry={() => setRefresh((value) => value + 1)} />
       {invoices.data && (invoices.data.invoices?.length ? <div className="table-responsive"><table className="table align-middle"><thead><tr><th>เลขที่</th><th>งาน / ลูกค้า</th><th>ยอด</th><th>สถานะ</th><th>วันที่</th><th>เอกสาร</th></tr></thead><tbody>
         {invoices.data.invoices.map((item) => <tr key={item.id}><td>{item.invoiceNumber}</td><td>{item.jobId}<br /><small>{item.customerName}</small></td><td><Money amount={item.amount} /></td><td><StatusBadge status={item.status} /></td><td>{item.createdAt}</td><td><button className="btn btn-sm btn-outline-primary" onClick={() => setPrintInvoice(item)}>ดู / พิมพ์</button></td></tr>)}
       </tbody></table></div> : <Empty>ไม่มีใบแจ้งหนี้</Empty>)}
-    </Panel>
+    </Panel>}
     {printInvoice && <section className="print-invoice card border p-4 p-md-5" aria-label="ตัวอย่างใบแจ้งหนี้">
       <div className="d-flex justify-content-between align-items-start mb-5">
         <div><h2 className="h3 fw-bold">AeroService</h2><p className="mb-0 text-secondary">ใบแจ้งหนี้</p></div>
@@ -76,5 +106,6 @@ export default function AccountantDashboard() {
       <div className="d-flex gap-2 mt-4 no-print"><button className="btn btn-primary" onClick={() => window.print()}>พิมพ์ใบแจ้งหนี้</button>
         <button className="btn btn-outline-secondary" onClick={() => setPrintInvoice(null)}>ปิด</button></div>
     </section>}
+    </div>
   </Dashboard>;
 }

@@ -4,6 +4,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './CustomerTheme.css';
 import { formatDate, jobStages, useCustomerData } from './customerContext';
 import { LogoutButton } from './AuthPages';
+import CustomerStatusNotifications from './CustomerStatusNotifications';
 
 function PaymentProof({ job, refreshBookings }) {
   const [uploading, setUploading] = useState(false);
@@ -117,6 +118,7 @@ export default function CustomerProfile() {
             </div>
           </Link>
           <div className="d-flex align-items-center gap-2 gap-sm-3">
+            <CustomerStatusNotifications />
             <div className="customer-user-chip">
               <span className="customer-avatar">
                 {user.fullName.charAt(0)}

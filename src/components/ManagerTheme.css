@@ -95,6 +95,17 @@
   color: #475569;
 }
 
+.mgr-pricing-tab-icon {
+  display: inline-grid;
+  width: 1.15rem;
+  height: 1.15rem;
+  place-items: center;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+  font-size: .75rem;
+  font-weight: 800;
+}
+
 .mgr-tab-btn.active .mgr-tab-pill {
   background: #eff6ff;
   color: #1d4ed8;

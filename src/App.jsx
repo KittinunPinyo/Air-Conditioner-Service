@@ -6,7 +6,9 @@ import CustomerProfile from './components/CustomerProfile';
 import { CustomerDataProvider } from './components/CustomerDataContext';
 import { useCustomerData } from './components/customerContext';
 import AccountantDashboard from './components/AccountantDashboard';
+import AccountantProfile from './components/AccountantProfile';
 import AdminDashboard from './components/AdminDashboard';
+import AdminProfile from './components/AdminProfile';
 import ManagerDashboard from './components/ManagerDashboard';
 import ManagerProfile from './components/ManagerProfile';
 import TechnicianDashboard from './components/TechnicianDashboard';
@@ -47,9 +49,11 @@ function App() {
             <Route path="/technician" element={<ProtectedRoute roles={['technician']}><TechnicianDashboard /></ProtectedRoute>} />
             <Route path="/technician/profile" element={<ProtectedRoute roles={['technician']}><TechnicianProfile /></ProtectedRoute>} />
             <Route path="/accountant" element={<ProtectedRoute roles={['accountant']}><AccountantDashboard /></ProtectedRoute>} />
+            <Route path="/accountant/profile" element={<ProtectedRoute roles={['accountant']}><AccountantProfile /></ProtectedRoute>} />
             <Route path="/manager" element={<ProtectedRoute roles={['store_manager']}><ManagerDashboard /></ProtectedRoute>} />
             <Route path="/manager/profile" element={<ProtectedRoute roles={['store_manager']}><ManagerProfile /></ProtectedRoute>} />
             <Route path="/admin" element={<ProtectedRoute roles={['system_admin']}><AdminDashboard /></ProtectedRoute>} />
+            <Route path="/admin/profile" element={<ProtectedRoute roles={['system_admin']}><AdminProfile /></ProtectedRoute>} />
             <Route path="*" element={<HomeRedirect />} />
           </Routes>
         </div>

@@ -3,13 +3,16 @@ import { useCustomerData } from './customerContext';
 import { Link } from 'react-router-dom';
 import TechnicianJobNotifications from './TechnicianJobNotifications';
 import ManagerNotifications from './ManagerNotifications';
+import AccountantPaymentNotifications from './AccountantPaymentNotifications';
 import './TechnicianTheme.css';
 
 export function Dashboard({ title, subtitle, children }) {
   const { user } = useCustomerData();
   const userName = user?.fullName || user?.name || user?.email || 'ช่างเทคนิค';
   const roleTitle = user?.role === 'technician' ? 'ช่างเทคนิคประจำสาขา'
-    : user?.role === 'store_manager' ? 'ผู้จัดการสาขา' : 'ทีมงาน AeroService';
+    : user?.role === 'accountant' ? 'เจ้าหน้าที่บัญชี'
+    : user?.role === 'store_manager' ? 'ผู้จัดการสาขา'
+      : user?.role === 'system_admin' || user?.role === 'admin' ? 'ผู้ดูแลระบบ' : 'ทีมงาน AeroService';
 
   return (
     <main className="staff-page min-vh-100 pb-5">
@@ -35,6 +38,19 @@ export function Dashboard({ title, subtitle, children }) {
               <>
                 <TechnicianJobNotifications />
                 <Link to="/technician/profile" className="staff-user-chip text-decoration-none" aria-label={`เปิดโปรไฟล์ของ ${userName}`}>
+                  <div className="staff-user-avatar">{userName.charAt(0)}</div>
+                  <span className="small fw-semibold">{userName}</span>
+                </Link>
+              </>
+            ) : user?.role === 'system_admin' || user?.role === 'admin' ? (
+              <Link to="/admin/profile" className="staff-user-chip text-decoration-none" aria-label={`เปิดโปรไฟล์ของ ${userName}`}>
+                <div className="staff-user-avatar">{userName.charAt(0)}</div>
+                <span className="small fw-semibold">{userName}</span>
+              </Link>
+            ) : user?.role === 'accountant' ? (
+              <>
+                <AccountantPaymentNotifications />
+                <Link to="/accountant/profile" className="staff-user-chip text-decoration-none" aria-label={`เปิดโปรไฟล์ของ ${userName}`}>
                   <div className="staff-user-avatar">{userName.charAt(0)}</div>
                   <span className="small fw-semibold">{userName}</span>
                 </Link>

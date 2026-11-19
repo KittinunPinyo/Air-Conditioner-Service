@@ -645,6 +645,16 @@ async function resetPassword({ token, password }) {
 
 const toPublicId = (id) => `JOB-${String(id).padStart(4, '0')}`;
 
+export function formatDateOnly(value) {
+  const date = value instanceof Date ? value : new Date(`${String(value).slice(0, 10)}T00:00:00`);
+  if (Number.isNaN(date.getTime())) {
+    throw new Error('Invalid appointment date returned by the database');
+  }
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${date.getFullYear()}-${month}-${day}`;
+}
+
 function toBooking(row) {
   return {
     id: toPublicId(row.id),
@@ -656,7 +666,7 @@ function toBooking(row) {
     btu: Number(row.btu),
     issue: row.issue,
     installWork: row.install_work,
-    date: String(row.appointment_date).slice(0, 10),
+    date: formatDateOnly(row.appointment_date),
     timeSlot: row.time_slot,
     address: row.address,
     estimatedPrice: {
@@ -1367,7 +1377,7 @@ app.get('/api/manager/operations', requireAuth, requireRole('store_manager'), as
       issue: row.issue,
       categoryName: row.category_name,
       status: row.status,
-      date: String(row.appointment_date).slice(0, 10),
+      date: formatDateOnly(row.appointment_date),
       timeSlot: row.time_slot,
       address: row.address,
       customerName: row.customer_name,
@@ -1795,11 +1805,11 @@ app.patch('/api/admin/users/:id', requireAuth, requireRole('system_admin'), asyn
   response.json({ user: { id: String(updated.id), role: updated.role, isActive: updated.isActive } });
 });
 
-app.get('/api/admin/settings/pricing', requireAuth, requireRole('system_admin'), async (request, response) => {
+app.get('/api/admin/settings/pricing', requireAuth, requireRole('system_admin', 'store_manager'), async (request, response) => {
   response.json({ settings: await getPricingSettings() });
 });
 
-app.put('/api/admin/settings/pricing', requireAuth, requireRole('system_admin'), async (request, response) => {
+app.put('/api/admin/settings/pricing', requireAuth, requireRole('system_admin', 'store_manager'), async (request, response) => {
   const input = request.body?.settings;
   const keys = Object.keys(initialPricing);
   const issueKeys = Object.keys(initialPricing.issueSurcharge);

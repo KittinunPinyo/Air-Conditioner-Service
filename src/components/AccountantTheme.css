@@ -1,0 +1,244 @@
+.accountant-workspace {
+  color: #172b4d;
+}
+
+.accountant-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+  padding: 1rem 1.25rem;
+  border: 1px solid #dce8f6;
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, .9);
+  box-shadow: 0 5px 18px rgba(27, 55, 92, .045);
+}
+
+.accountant-toolbar h2 {
+  color: #18395f;
+}
+
+.accountant-date-range input {
+  min-width: 9.5rem;
+  margin-top: .25rem;
+  border-color: #dce5f0;
+  border-radius: .6rem;
+}
+
+.accountant-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .45rem;
+  padding: .5rem;
+  border: 1px solid #dce8f6;
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, .85);
+  box-shadow: 0 5px 18px rgba(27, 55, 92, .04);
+}
+
+.accountant-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  padding: .65rem 1rem;
+  border: 1px solid transparent;
+  border-radius: .7rem;
+  background: transparent;
+  color: #52657e;
+  font: inherit;
+  font-size: .88rem;
+  font-weight: 600;
+  transition: background-color .18s ease, color .18s ease, box-shadow .18s ease;
+}
+
+.accountant-tab:hover {
+  background: #f0f6ff;
+  color: #1555a5;
+}
+
+.accountant-tab.active {
+  background: linear-gradient(135deg, #1555a5, #0879b8);
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(21, 85, 165, .2);
+}
+
+.accountant-tab-count {
+  display: inline-grid;
+  min-width: 1.35rem;
+  height: 1.35rem;
+  place-items: center;
+  padding: 0 .3rem;
+  border-radius: 999px;
+  background: #e8f1fc;
+  color: #1555a5;
+  font-size: .72rem;
+  font-weight: 700;
+}
+
+.accountant-tab.active .accountant-tab-count {
+  background: rgba(255, 255, 255, .2);
+  color: #fff;
+}
+
+.accountant-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.accountant-summary-card {
+  min-width: 0;
+  padding: 1rem 1.1rem;
+  border: 1px solid #dce8f6;
+  border-radius: .9rem;
+  background: linear-gradient(145deg, #fff, #f7faff);
+  box-shadow: 0 5px 18px rgba(27, 55, 92, .04);
+}
+
+.accountant-summary-card small,
+.accountant-summary-card strong {
+  display: block;
+}
+
+.accountant-summary-card small {
+  margin-bottom: .35rem;
+  color: #718198;
+  font-size: .8rem;
+  font-weight: 600;
+}
+
+.accountant-summary-card strong {
+  color: #123d72;
+  font-size: 1.35rem;
+  font-weight: 800;
+}
+
+.accountant-table-wrap {
+  overflow: hidden;
+  border: 1px solid #e4ecf5;
+  border-radius: .85rem;
+}
+
+.accountant-workspace .table {
+  --bs-table-bg: transparent;
+  --bs-table-color: #293d58;
+  min-width: 600px;
+  margin-bottom: 0;
+  font-size: .9rem;
+}
+
+.accountant-workspace .table thead th {
+  background: #f5f9fe;
+  color: #64748b;
+  font-size: .76rem;
+  font-weight: 700;
+}
+
+.accountant-profile-identity {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: .5rem 0 1.25rem;
+}
+
+.accountant-profile-avatar {
+  display: grid;
+  width: 5.25rem;
+  height: 5.25rem;
+  margin-bottom: .9rem;
+  place-items: center;
+  border: 4px solid #e8f2ff;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #38bdf8, #2563eb);
+  box-shadow: 0 8px 20px rgba(37, 99, 235, .2);
+  color: #fff;
+  font-size: 2rem;
+  font-weight: 800;
+}
+
+.accountant-profile-identity h2 {
+  margin: 0;
+  color: #18395f;
+  font-size: 1.2rem;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+  text-align: center;
+}
+
+.accountant-profile-identity span {
+  margin-top: .5rem;
+  padding: .35rem .85rem;
+  border: 1px solid #bfdbfe;
+  border-radius: 999px;
+  background: #eff6ff;
+  color: #1555a5;
+  font-size: .8rem;
+  font-weight: 700;
+}
+
+.accountant-profile-details {
+  border-top: 1px solid #e6edf6;
+  padding-top: 1rem;
+}
+
+.accountant-profile-details div {
+  display: grid;
+  grid-template-columns: 6rem minmax(0, 1fr);
+  gap: .75rem;
+  padding: .45rem 0;
+  font-size: .9rem;
+}
+
+.accountant-profile-details dt {
+  color: #718198;
+  font-weight: 600;
+}
+
+.accountant-profile-details dd {
+  margin: 0;
+  color: #20344f;
+}
+
+.accountant-profile-back {
+  width: 100%;
+  padding: .75rem 1rem;
+  border: 0;
+  border-radius: .75rem;
+  background: linear-gradient(135deg, #1555a5, #0879b8);
+  font-weight: 600;
+}
+
+.accountant-profile-back:hover {
+  background: #123d72;
+}
+
+@media (max-width: 768px) {
+  .accountant-summary-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 576px) {
+  .accountant-toolbar {
+    align-items: stretch;
+    padding: .9rem;
+  }
+
+  .accountant-tabs {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .accountant-tab {
+    justify-content: center;
+    padding: .6rem .45rem;
+    font-size: .8rem;
+  }
+
+  .accountant-summary-grid {
+    grid-template-columns: 1fr;
+    gap: .7rem;
+  }
+}

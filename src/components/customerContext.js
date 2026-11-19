@@ -13,11 +13,19 @@ export const getLocalDate = (date = new Date()) => {
   return localDate.toISOString().slice(0, 10);
 };
 
-export const formatDate = (date) => new Date(`${date}T00:00:00`).toLocaleDateString('th-TH', {
-  day: 'numeric',
-  month: 'short',
-  year: 'numeric',
-});
+export const formatDate = (date) => {
+  if (!date) return '—';
+  const value = String(date);
+  const parsedDate = /^\d{4}-\d{2}-\d{2}$/.test(value)
+    ? new Date(`${value}T00:00:00`)
+    : new Date(value);
+  if (Number.isNaN(parsedDate.getTime())) return '—';
+  return parsedDate.toLocaleDateString('th-TH', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+  });
+};
 
 export const CustomerDataContext = createContext(null);
 

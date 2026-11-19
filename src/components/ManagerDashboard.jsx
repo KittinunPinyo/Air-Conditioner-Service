@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { Dashboard, Money, MutationFeedback, Panel, ResourceState, StatusBadge } from './StaffDashboardCommon';
 import { api, getServiceLabel, useMutation, useResource } from './StaffDashboardUtils';
+import { PricingSettingsFields } from './PricingSettingsFields';
+import './AdminTheme.css';
 import './ManagerTheme.css';
 
 export default function ManagerDashboard() {
@@ -10,9 +12,18 @@ export default function ManagerDashboard() {
   const technicians = useResource('/manager/technicians', refresh);
   const requests = useResource('/manager/requests', refresh);
   const kpi = useResource('/manager/kpi', refresh);
+  const pricing = useResource('/admin/settings/pricing', refresh);
   const mutation = useMutation();
   const [assignments, setAssignments] = useState({});
   const [notes, setNotes] = useState({});
+  const [pricingDraft, setPricingDraft] = useState({ source: null, value: null });
+  const pricingSettings = pricingDraft.source === pricing.data ? pricingDraft.value : pricing.data?.settings;
+  const setPricingSettings = (update) => setPricingDraft((current) => ({
+    source: pricing.data,
+    value: typeof update === 'function'
+      ? update(current.source === pricing.data ? current.value : pricing.data?.settings)
+      : update,
+  }));
 
   const bookingList = operations.data?.bookings || [];
   const requestList = requests.data?.requests || [];
@@ -33,6 +44,20 @@ export default function ManagerDashboard() {
     if (await mutation.run(() => api(`/manager/requests/${encodeURIComponent(request.id)}`, {
       method: 'PATCH', body: JSON.stringify({ decision, note: notes[request.id] || '' }),
     }), 'บันทึกผลการพิจารณาแล้ว')) setRefresh((value) => value + 1);
+  };
+
+  const savePricing = async (event) => {
+    event.preventDefault();
+    const settings = Object.fromEntries(Object.entries(pricingSettings || {}).map(([key, value]) => [
+      key,
+      typeof value === 'object' && value !== null
+        ? Object.fromEntries(Object.entries(value).map(([nested, amount]) => [nested, Number(amount)]))
+        : Number(value),
+    ]));
+    if (await mutation.run(
+      () => api('/admin/settings/pricing', { method: 'PUT', body: JSON.stringify({ settings }) }),
+      'บันทึกการตั้งราคาแล้ว',
+    )) setRefresh((value) => value + 1);
   };
 
   const getTimeSlotLabel = (slot) => {
@@ -485,6 +510,21 @@ export default function ManagerDashboard() {
     </Panel>
   );
 
+  const renderPricingPanel = () => (
+    <Panel title="ตั้งค่าราคาและคอมมิชชัน">
+      <ResourceState {...pricing} onRetry={() => setRefresh((value) => value + 1)} />
+      {pricingSettings && (
+        <form onSubmit={savePricing}>
+          <p className="admin-pricing-description">กรอกราคาบริการเป็นบาท และกำหนดอัตราคอมมิชชันเป็นเปอร์เซ็นต์</p>
+          <PricingSettingsFields settings={pricingSettings} setSettings={setPricingSettings} />
+          <div className="d-flex justify-content-end mt-4">
+            <button className="btn btn-primary admin-save-button" disabled={mutation.busy}>บันทึกการตั้งค่า</button>
+          </div>
+        </form>
+      )}
+    </Panel>
+  );
+
   return (
     <Dashboard title="จัดการปฏิบัติการ" subtitle="กระจายงานช่าง ดูแลคำขออนุมัติ และติดตามคุณภาพบริการ">
       <MutationFeedback mutation={mutation} />
@@ -574,6 +614,15 @@ export default function ManagerDashboard() {
 
           <button
             type="button"
+            className={`mgr-tab-btn ${activeTab === 'pricing' ? 'active' : ''}`}
+            onClick={() => setActiveTab('pricing')}
+          >
+            <span className="mgr-pricing-tab-icon" aria-hidden="true">฿</span>
+            <span>ราคาและคอมมิชชัน</span>
+          </button>
+
+          <button
+            type="button"
             className={`mgr-tab-btn ${activeTab === 'all' ? 'active' : ''}`}
             onClick={() => setActiveTab('all')}
           >
@@ -590,11 +639,13 @@ export default function ManagerDashboard() {
       {activeTab === 'operations' && renderOperationsPanel()}
       {activeTab === 'requests' && renderRequestsPanel()}
       {activeTab === 'kpi' && renderKpiPanel()}
+      {activeTab === 'pricing' && renderPricingPanel()}
       {activeTab === 'all' && (
         <>
           {renderOperationsPanel()}
           {renderRequestsPanel()}
           {renderKpiPanel()}
+          {renderPricingPanel()}
         </>
       )}
     </Dashboard>

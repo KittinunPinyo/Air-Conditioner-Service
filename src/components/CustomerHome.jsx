@@ -9,6 +9,7 @@ import {
   useCustomerData,
 } from './customerContext';
 import { LogoutButton } from './AuthPages';
+import CustomerStatusNotifications from './CustomerStatusNotifications';
 
 export default function CustomerHome() {
   const { user, jobs, addBooking, loading: jobsLoading, error: jobsError } = useCustomerData();
@@ -183,6 +184,7 @@ export default function CustomerHome() {
             </div>
           </Link>
           <div className="d-flex align-items-center gap-2 gap-sm-3">
+            <CustomerStatusNotifications />
             <Link to="/profile" className="customer-user-chip">
               <span className="customer-avatar">
                 {user.fullName.charAt(0)}
